@@ -7,6 +7,11 @@ pipeline {
         PATH = "${env.JAVA_HOME}\\bin;${env.PATH}"
     }
 
+    // Add triggers here
+    triggers {
+        pollSCM('H/5 * * * *') // Polls SCM every 5 minutes
+    }
+
     stages {
         stage('Checkout') {
             steps {
