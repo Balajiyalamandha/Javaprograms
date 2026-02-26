@@ -1,67 +1,50 @@
 pipeline {
-    agent any
-    
+    agent { label 'Windows1' }
+
     environment {
-        // Optional: Set Java version if multiple installed
         JAVA_HOME = 'C:\\Program Files\\Java\\jdk-17'
         PATH = "${env.JAVA_HOME}\\bin;${env.PATH}"
     }
 
-    // Add triggers here
     triggers {
-        pollSCM('H/5 * * * *') // Polls SCM every 5 minutes
+        pollSCM('H/5 * * * *')
     }
 
     stages {
+
         stage('Checkout') {
             steps {
-                echo 'Cloning repository...'
-                git branch: 'main', url: 'https://github.com/Balajiyalamandha/Javaprograms.git'
+                git branch: 'main',
+                    url: 'https://github.com/Balajiyalamandha/Javaprograms.git'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building Java project...'
-                // For Maven
                 bat 'mvn clean compile'
-                // For Gradle: bat 'gradle build'
             }
         }
 
-        stage('Run Tests') {
+        stage('Test') {
             steps {
-                echo 'Running tests...'
-                // For Maven
                 bat 'mvn test'
-                // For Gradle: bat 'gradle test'
             }
             post {
                 always {
-                    junit '**/target/surefire-reports/*.xml' // Test report publishing
+                    junit '**/target/surefire-reports/*.xml'
                 }
             }
         }
 
         stage('Package') {
             steps {
-                echo 'Packaging artifact...'
                 bat 'mvn package'
             }
         }
     }
 
     post {
-        success {
-            echo 'Build and tests SUCCESSFUL!'
-            // Optional: Notify Slack/email here
-        }
-        failure {
-            echo 'Build or tests FAILED!'
-            // Optional: Notify Slack/email here
-        }
         always {
-            echo 'Cleaning workspace...'
             cleanWs()
         }
     }
