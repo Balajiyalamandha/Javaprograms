@@ -1,0 +1,9 @@
+package variables_Datatypes;
+
+public class PrintVariable {
+    public static void main(String[]args)
+    {
+        int age = 29;
+        System.out.println("Age ="+ age);
+    }
+}
